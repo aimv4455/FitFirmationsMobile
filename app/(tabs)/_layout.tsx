@@ -8,6 +8,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home" size={size} color={color} />
           ),
@@ -17,6 +18,7 @@ export default function TabLayout() {
         name="categories"
         options={{
           title: 'Categories',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="grid" size={size} color={color} />
           ),
@@ -26,6 +28,7 @@ export default function TabLayout() {
         name="favorites"
         options={{
           title: 'Favorites',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="heart" size={size} color={color} />
           ),
@@ -35,6 +38,7 @@ export default function TabLayout() {
         name="about"
         options={{
           title: 'About',
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="information-circle" size={size} color={color} />
           ),
