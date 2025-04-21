@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet } from 'react-native';
-import { useMemo } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useMemo, useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { affirmations } from '../../constants/affirmations';
 
 export default function HomeScreen() {
@@ -11,6 +12,27 @@ export default function HomeScreen() {
     return affirmations[dayOfYear % affirmations.length];
   }, []);
 
+  const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    AsyncStorage.getItem('favorites').then(data => {
+      const parsed = data ? JSON.parse(data) : [];
+      if (parsed.includes(todayAffirmation)) {
+        setIsSaved(true);
+      }
+    });
+  }, []);
+
+  const saveToFavorites = async () => {
+    const data = await AsyncStorage.getItem('favorites');
+    const parsed = data ? JSON.parse(data) : [];
+    if (!parsed.includes(todayAffirmation)) {
+      parsed.push(todayAffirmation);
+      await AsyncStorage.setItem('favorites', JSON.stringify(parsed));
+      setIsSaved(true);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
@@ -18,6 +40,16 @@ export default function HomeScreen() {
           “{todayAffirmation}”
         </Text>
       </View>
+
+      <TouchableOpacity
+        onPress={saveToFavorites}
+        style={[styles.button, isSaved && styles.buttonDisabled]}
+        disabled={isSaved}
+      >
+        <Text style={styles.buttonText}>
+          {isSaved ? '❤️ Saved!' : '❤️ Save to Favorites'}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 }
@@ -27,7 +59,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F7F0F5', // Soft pastel lavender
+    backgroundColor: '#F7F0F5',
     padding: 20,
   },
   card: {
@@ -39,11 +71,27 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
     elevation: 6,
+    marginBottom: 20,
   },
   affirmation: {
     fontSize: 22,
     textAlign: 'center',
     color: '#444',
     fontWeight: '500',
+  },
+  button: {
+    backgroundColor: '#FFB6C1',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 25,
+    marginTop: 12,
+  },
+  buttonDisabled: {
+    backgroundColor: '#ddd',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
   },
 });
